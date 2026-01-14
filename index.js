@@ -13,13 +13,21 @@ app.use(express.json());
 const tasksRouter = require('./routes/tasks');
 const aiRouter = require('./routes/ai');
 
-app.use('/api/tasks', tasksRouter);
-app.use('/api/ai', aiRouter);
+const router = express.Router();
+router.use('/api/tasks', tasksRouter);
+router.use('/api/ai', aiRouter);
 
-app.get('/', (req, res) => {
+router.get('/', (req, res) => {
   res.send('Lezat AI Backend is running!');
 });
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+app.use('/', router);
+app.use('/.netlify/functions/api', router);
+
+if (require.main === module) {
+  app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+  });
+}
+
+module.exports = app;
